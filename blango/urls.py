@@ -36,7 +36,8 @@ urlpatterns = [
         name="django_registration_register",
     ),
     path("accounts/", include("django_registration.backends.activation.urls")),
-    path("accounts/d/", include("django.contrib.auth.urls")),
+    path("accounts/", include("django.contrib.auth.urls")),
+    path("accounts/", include("allauth.urls")),
     path("", blog.views.index, name="blog-post-list"),
 ]
 
