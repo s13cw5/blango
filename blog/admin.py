@@ -1,8 +1,12 @@
 from django.contrib import admin
-from blog.models import Tag, Post, Comment
+
+from blango_auth.models import User
+from blango_auth.admin import BlangoUserAdmin
+from blog.models import Tag, Post, Comment, AuthorProfile
 
 # Register your models here.
 
+admin.site.register(User, BlangoUserAdmin)
 admin.site.register(Tag)
 
 class PostAdmin(admin.ModelAdmin):
@@ -11,3 +15,4 @@ class PostAdmin(admin.ModelAdmin):
 
 admin.site.register(Post, PostAdmin)
 admin.site.register(Comment)
+admin.site.register(AuthorProfile)
