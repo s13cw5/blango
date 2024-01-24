@@ -39,6 +39,7 @@ urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path("accounts/", include("allauth.urls")),
     path("", blog.views.index, name="blog-post-list"),
+    path("api/v1/", include("blog.api_urls")),
 ]
 
 if settings.DEBUG:
