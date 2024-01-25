@@ -5,6 +5,12 @@ from blog.models import Post, Tag, Comment
 User = get_user_model()
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "email"]
+
+
 class TagField(serializers.SlugRelatedField):
     def to_internal_value(self, data):
         try:
@@ -56,9 +62,3 @@ class PostDetailSerializer(PostSerializer):
             comment.save()
 
         return instance
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ["first_name", "last_name", "email"]
