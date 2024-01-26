@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from versatileimagefield.serializers import VersatileImageFieldSerializer
+
 from blog.models import Post, Tag, Comment
 
 User = get_user_model()
@@ -43,15 +45,30 @@ class PostSerializer(serializers.ModelSerializer):
     author = serializers.HyperlinkedRelatedField(
         queryset=User.objects.all(), view_name="api_user_detail", lookup_field="email"
     )
+    hero_image = VersatileImageFieldSerializer(
+        sizes=[
+            ("full_size", "url"),
+            ("thumbnail", "thumbnail__100x100"),
+        ],
+        read_only=True,
+    )
 
     class Meta:
         model = Post
-        fields = "__all__"
+        exclude = ["ppoi"]
         readonly = ["modified_at", "created_at"]
 
 
 class PostDetailSerializer(PostSerializer):
     comments = CommentSerializer(many=True)
+    hero_image = VersatileImageFieldSerializer(
+        sizes=[
+            ("full_size", "url"),
+            ("thumbnail", "thumbnail__100x100"),
+            ("square_crop", "crop__200x200"),
+        ],
+        read_only=True,
+    )
 
     def update(self, instance, validated_data):
         comments = validated_data.pop("comments")
