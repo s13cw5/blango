@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.shortcuts import render, get_object_or_404
 from django.shortcuts import redirect
+from django.urls import reverse
 
 from blog.forms import CommentForm
 from blog.models import Post
@@ -12,7 +13,10 @@ def get_ip(request):
   return HttpResponse(request.META['REMOTE_ADDR'])
 
 def post_table(request):
-    return render(request, "blog/post-table.html")
+    return render(
+        request, "blog/post-table.html", {"post_list_url": reverse("post-list")}
+    )
+
 
 # Create your views here.
 def index(request):

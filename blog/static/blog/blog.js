@@ -1,11 +1,27 @@
+['/api/v1/posts/', '/', '/abadurl/'].forEach(url => {
+  fetch(url).then(response => {
+    if (response.status !== 200) {
+      throw new Error('Invalid status from server: ' + response.statusText)
+    }
+
+    return response.json()
+  }).then(data => {
+    // do something with data, for example
+    console.log(data)
+  }).catch(e => {
+    console.error(e)
+  })
+})
+
+
 class PostRow extends React.Component {
-  render () {
+  render() {
     const post = this.props.post
 
     let thumbnail
 
     if (post.hero_image.thumbnail) {
-      thumbnail = <img src={post.hero_image.thumbnail}/>
+      thumbnail = <img src={post.hero_image.thumbnail} />
     } else {
       thumbnail = '-'
     }
@@ -25,31 +41,38 @@ class PostRow extends React.Component {
 
 class PostTable extends React.Component {
   state = {
-    dataLoaded: true,
-    data: {
-      results: [
-        {
-          id: 15,
-          tags: [
-            'django', 'react'
-          ],
-          'hero_image': {
-            'thumbnail': '/media/__sized__/hero_images/snake-419043_1920-thumbnail-100x100-70.jpg',
-            'full_size': '/media/hero_images/snake-419043_1920.jpg'
-          },
-          title: 'Test Post',
-          slug: 'test-post',
-          summary: 'A test post, created for Django/React.'
-        }
-      ]
-    }
+    dataLoaded: false,
+    data: null
   }
 
-  render () {
+  componentDidMount() {
+    fetch(this.props.url).then(response => {
+      if (response.status !== 200) {
+        throw new Error('Invalid status from server: ' + response.statusText)
+      }
+
+      return response.json()
+    }).then(data => {
+      this.setState({
+        dataLoaded: true,
+        data: data
+      })
+    }).catch(e => {
+      console.error(e)
+      this.setState({
+        dataLoaded: true,
+        data: {
+          results: []
+        }
+      })
+    })
+  }
+
+  render() {
     let rows
     if (this.state.dataLoaded) {
       if (this.state.data.results.length) {
-        rows = this.state.data.results.map(post => <PostRow post={post} key={post.id}/>)
+        rows = this.state.data.results.map(post => <PostRow post={post} key={post.id} />)
       } else {
         rows = <tr>
           <td colSpan="6">No results found.</td>
@@ -63,17 +86,17 @@ class PostTable extends React.Component {
 
     return <table className="table table-striped table-bordered mt-2">
       <thead>
-      <tr>
-        <th>Title</th>
-        <th>Image</th>
-        <th>Tags</th>
-        <th>Slug</th>
-        <th>Summary</th>
-        <th>Link</th>
-      </tr>
+        <tr>
+          <th>Title</th>
+          <th>Image</th>
+          <th>Tags</th>
+          <th>Slug</th>
+          <th>Summary</th>
+          <th>Link</th>
+        </tr>
       </thead>
       <tbody>
-      {rows}
+        {rows}
       </tbody>
     </table>
   }
@@ -81,6 +104,6 @@ class PostTable extends React.Component {
 
 const domContainer = document.getElementById('react_root')
 ReactDOM.render(
-  React.createElement(PostTable),
+  React.createElement(PostTable, {url: postListUrl}),
   domContainer
 )
